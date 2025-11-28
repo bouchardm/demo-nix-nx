@@ -1,0 +1,9 @@
+{
+  "name": "app",
+  "scripts": {
+    "build": "bun build index.ts --target node --outdir dist"
+  },
+  "dependencies": {
+    "link": "workspace:*"
+  }
+}

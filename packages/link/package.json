@@ -1,0 +1,13 @@
+{
+  "name": "link",
+  "scripts": {
+    "build": "bun build index.ts --target node --outdir dist"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./types/index.d.ts"
+    }
+  }
+}
