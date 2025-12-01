@@ -5,6 +5,14 @@
   };
   outputs = { self, nixpkgs, bun2nix }: let 
     pkgs = nixpkgs.legacyPackages.x86_64-linux;
+
+    alpine = pkgs.dockerTools.pullImage {
+      imageName = "alpine";
+      # nix run nixpkgs#skopeo -- inspect docker://oven/bun:1
+      imageDigest = "sha256:4b7ce07002c69e8f3d704a9c5d6fd3053be500b7f1c69fc0d80990c2ad8dd412";
+      finalImageTag = "3.22";
+      sha256 = "sha256-tsrC+ZwpRUx8hPsgMOoWkPdVOq8m1e8Yc7oHNlabLek=";
+    };
   in {
     packages.x86_64-linux.hello = pkgs.hello;
 
@@ -25,9 +33,25 @@
         bun build packages/app/index.ts --outfile packages/app/bin/cli --compile
       '';
       installPhase = ''
-        mkdir -p $out/bin
-        cp -R packages/app/bin/cli $out
+        mkdir -p $out/demo
+        cp -R packages/app/bin/cli $out/demo
       '';
+    };
+
+    packages.x86_64-linux.docker = pkgs.dockerTools.buildImage {
+      name = "bouchardm/nix-demo";
+      tag = "0.2.0";
+      fromImage = alpine;
+      copyToRoot = pkgs.buildEnv {
+        name = "root";
+        paths = [ 
+          self.packages.x86_64-linux.demo
+        ];
+        pathsToLink = ["/demo"];
+      };
+      config = {
+        Entrypoint = [ "/demo/cli" ];
+      };
     };
 
     devShells.x86_64-linux.default = pkgs.mkShell {
