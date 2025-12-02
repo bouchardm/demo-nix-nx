@@ -39,8 +39,8 @@
     };
 
     packages.x86_64-linux.docker = pkgs.dockerTools.buildImage {
-      name = "bouchardm/nix-demo";
-      tag = "0.2.0";
+      name = "nix-demo";
+      tag = "0.1.0";
       fromImage = alpine;
       copyToRoot = pkgs.buildEnv {
         name = "root";
